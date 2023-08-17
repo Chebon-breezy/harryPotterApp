@@ -1,4 +1,4 @@
-// pages/index.tsx
+// app/page.tsx
 import Link from "next/link";
 import axios from "axios";
 
