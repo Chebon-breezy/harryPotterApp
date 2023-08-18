@@ -8,12 +8,13 @@ interface Props {
   characters: Character[];
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const characters = await getCharacters();
+export const getStaticProps: GetStaticProps = async () => {
+  const res = await fetch("https://hp-api.onrender.com/api/characters");
+  const data = await res.json();
 
   return {
     props: {
-      characters,
+      characters: data,
     },
   };
 };
@@ -21,11 +22,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 export default function Home({ characters }: Props) {
   return (
     <div className="grid">
-      {characters.map((character) => (
-        <Link key={character.id} href={`/characters/${character.id}`}>
-          <Card character={character} />
-        </Link>
-      ))}
+      {characters &&
+        characters.map((character) => (
+          <Link key={character.id} href={`/characters/${character.id}`}>
+            <Card character={character} />
+          </Link>
+        ))}
     </div>
   );
 }
