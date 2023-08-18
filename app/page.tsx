@@ -1,39 +1,31 @@
-// app/page.tsx
+import { GetStaticProps } from "next";
 import Link from "next/link";
-import axios from "axios";
+import { Character } from "../types";
+import { getCharacters } from "../services/api";
+import Card from "../components/Card";
 
-interface Character {
-  _id: string;
-  name: string;
-  dob: string;
-  house: string;
-  // other character attributes here
+interface Props {
+  characters: Character[];
 }
 
-export async function getServerSideProps() {
-  const { data } = await axios.get("https://hp-api.onrender.com/");
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const characters = await getCharacters();
 
   return {
     props: {
-      characters: data,
+      characters,
     },
   };
-}
-
-const HomePage = ({ characters }: { characters: Character[] }) => {
-  return (
-    <div className="flex flex-col items-center">
-      {characters &&
-        characters.map((character: Character) => (
-          <Link href={`/character/${character._id}`} key={character._id}>
-            <div className="mb-4 w-72 border-2 border-gray-300 rounded-lg p-4 hover:shadow-xl cursor-pointer">
-              <h2 className="font-bold text-xl mb-2">{character.name}</h2>
-              <p>Date of Birth: {character.dob}</p>
-            </div>
-          </Link>
-        ))}
-    </div>
-  );
 };
 
-export default HomePage;
+export default function Home({ characters }: Props) {
+  return (
+    <div className="grid">
+      {characters.map((character) => (
+        <Link key={character.id} href={`/characters/${character.id}`}>
+          <Card character={character} />
+        </Link>
+      ))}
+    </div>
+  );
+}
